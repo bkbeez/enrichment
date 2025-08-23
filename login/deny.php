@@ -1,5 +1,4 @@
-<?php ob_start(); ?>
-<?php session_start(); ?>
+<?php require_once($_SERVER["DOCUMENT_ROOT"].'/login/lib/app.php'); ?><?php ob_start(); ?>
 <?php
     $title = ((isset($_SESSION['loginmsg'])&&isset($_SESSION['loginmsg']['title'])&&$_SESSION['loginmsg']['title'])?$_SESSION['loginmsg']['title']:"Oops !!!");
 ?>
@@ -42,7 +41,7 @@
                 color: red;
                 font-family: 'Lato', sans-serif;  
                 font-weight: 400;
-                font-size:150px;
+                font-size: 72px;
                 position: relative;
                 left:-100%;
                 transition: all 0.5s;
@@ -50,7 +49,7 @@
             .cont_error > p  {
                 font-family: 'Lato', sans-serif;  
                 font-weight: 300;
-                font-size:24px;
+                font-size:20px;
                 letter-spacing: 5px;
                 color:#9294AE;
                 position: relative;
@@ -184,6 +183,30 @@
                     transform: rotate(-20deg);
                 }
             }
+            button.back {
+                padding: 17px 40px;
+                border-radius: 10px;
+                border: 0;
+                background-color: rgb(255, 56, 86);
+                letter-spacing: 1.5px;
+                font-size: 15px;
+                transition: all 0.3s ease;
+                box-shadow: rgb(201, 46, 70) 0px 10px 0px 0px;
+                color: hsl(0, 0%, 100%);
+                cursor: pointer;
+            }
+
+            button.back:hover {
+                box-shadow: rgb(201, 46, 70) 0px 7px 0px 0px;
+            }
+
+            button.back:active {
+                background-color: rgb(255, 56, 86);
+                /*50, 168, 80*/
+                box-shadow: rgb(201, 46, 70) 0px 0px 0px 0px;
+                transform: translateY(5px);
+                transition: 200ms;
+            }
         </style>
     </head>   
     <body>
@@ -191,6 +214,8 @@
             <div class="cont_error">
                 <h1><?=$title?></h1>  
                 <p><?=((isset($_SESSION['loginmsg'])&&isset($_SESSION['loginmsg']['text'])&&$_SESSION['loginmsg']['text'])?$_SESSION['loginmsg']['text']:"The Page you're looking for isn't here.")?></p>
+                <br>
+                <button type="button" class="back" onclick="document.location='<?=APP_HOME?>';">Back to Home</button>
             </div>
             <div class="cont_aura_1"></div>
             <div class="cont_aura_2"></div>

@@ -329,7 +329,7 @@ border-radius: 2px 0px 0 0;
     $(document).ready(function() {
       $('#cmulogin').click(function(event) {
         event.preventDefault();
-        window.location.href = 'cmu_oauth/callback.php';
+        window.location.href = 'login/index.php';
       });
     });
   </script>

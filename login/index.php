@@ -1,3 +1,4 @@
+<?php require_once($_SERVER["DOCUMENT_ROOT"].'/login/lib/app.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -283,7 +284,7 @@
         <div class="widget">
             <div class="widget-login">
                 <div>
-                    <button class="pushable">
+                    <button type="button" class="pushable" onclick="document.location='<?=APP_HOME?>/login/signin.php';">
                         <span class="shadow"></span>
                         <span class="edge"></span>
                         <span class="front">SIGN IN WITH CMU ACCOUNT</span>

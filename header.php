@@ -45,11 +45,15 @@
       .header-five .header-nav{
         height: 50px;
       }
+      .header-fixed.fixed-72 {
+        min-height: 72px;
+        background: white;
+      }
     </style>
     <input type="text" id="subadmin" value="<?= $subadmin ?>" hidden>
 
     <header class="header header-five">
-      <div class="header-fixed">
+      <div class="header-fixed fixed-72">
         <nav class="navbar navbar-expand-lg header-nav">
           <div class="container">
             <div class="navbar-header">
@@ -141,7 +145,7 @@
                 <?php if (isset($_SESSION['cmuitaccount'])) { ?>
                   <a class="btn btn btn-outline-danger btn-rounded p-2 cmulogout" href="#" data-basename_admin="<?= $basename_dirname_PHP_SELF ?>"><i class="bi bi-power"></i>logout</a>
                 <?php }else { ?>
-                  <a class="btn btn-lg btn-primary btn-rounded p-2 active" href="#" id="cmulogin"><i class="bi bi-person-fill-lock"></i>CMU login</a>
+                  <a class="btn btn-lg btn-primary btn-rounded p-2 active" href="#" id="cmulogin"><i class="bi bi-person-fill-lock"></i> Login</a>
                 <?php } ?>
 
               </li>
