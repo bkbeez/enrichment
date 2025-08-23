@@ -1,0 +1,7 @@
+<IfModule mod_rewrite.c>
+    Options -Indexes
+</IfModule>
+<Files ms.env> 
+    Order Allow,Deny
+    Deny from all
+</Files>
