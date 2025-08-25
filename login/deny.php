@@ -195,7 +195,6 @@
                 color: hsl(0, 0%, 100%);
                 cursor: pointer;
             }
-
             button.back:hover {
                 box-shadow: rgb(201, 46, 70) 0px 7px 0px 0px;
             }

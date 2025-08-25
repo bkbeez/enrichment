@@ -1,4 +1,28 @@
 <?php require_once($_SERVER["DOCUMENT_ROOT"].'/login/lib/app.php'); ?>
+<?php require_once($_SERVER["DOCUMENT_ROOT"].'/login/lib/azure.class.php'); ?>
+<?php require_once($_SERVER["DOCUMENT_ROOT"].'/login/lib/azureinfo.class.php'); ?>
+<?php
+    if( isset($_SESSION['oauth2account'])&&$_SESSION['oauth2account'] ){
+        $oauth2account = $_SESSION['oauth2account'];
+    }else{
+        $signin = new Azure();
+        $signin->setCallbackUri(APP_HOME.'/login/index.php');
+        $signin->setScope('api://cmu/Mis.Account.Read.Me.Basicinfo api://cmu/Mis.Hr.Read.Me.Personalinfo');
+        if( !isset($_GET['code']) ){
+            $signin->initAzure();
+        }else{
+            $code = $_GET['code'];
+            $accessToken = $signin->getAccessTokenAuthCode($code);
+            $azure = new Azureinfo();
+            $basic = $azure->getBasicinfo($accessToken->access_token);
+            if( isset($basic->cmuitaccount) ){
+                $_SESSION['oauth2account'] = $basic->cmuitaccount;
+                header('Location: '.APP_HOME.'/login/index.php');
+                exit();
+            }
+        }
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -20,7 +44,7 @@
             }
             body {
                 background-color: #D4D9ED;
-                background: url('https://enrichment-program.edu.cmu.ac.th/assets/img/edcmu/head_index1.jpg') top center no-repeat;
+                background: url('<?=APP_HOME?>/assets/img/edcmu/head_index1.jpg') top left no-repeat;
                 background-size: cover;
             }
             .widget {
@@ -30,7 +54,7 @@
                 overflow: hidden;
             }
             .widget-login {
-                bottom: 5%;
+                bottom: 2%;
                 width: 100%;
                 z-index: 10;
                 position: fixed;
@@ -242,6 +266,24 @@
               transform: translateY(-4px);
               transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
             }
+            .pushable.cancel {
+                outline-color: deepred;
+            }
+            .pushable.cancel .shadow {
+                background: red;
+            }
+            .pushable.cancel .edge {
+              background: linear-gradient(
+                to right,
+                hsl(0, 85.8%, 35.9%) 0%,
+                hsl(0, 85.8%, 35.9%) 8%,
+                hsl(0, 85.8%, 35.9%) 92%,
+                hsl(0, 85.8%, 35.9%) 100%
+              );
+            }
+            .pushable.cancel .front {
+                background: hsl(0, 74%, 54.7%);
+            }
             .pushable:hover {
               filter: brightness(110%);
             }
@@ -283,14 +325,32 @@
     <body>
         <div class="widget">
             <div class="widget-login">
+            <?php if( isset($oauth2account) ){ ?>
+                <div>
+                    <button type="button" class="pushable" onclick="document.location='<?=APP_HOME?>/login/signin.php';">
+                        <span class="shadow"></span>
+                        <span class="edge"></span>
+                        <span class="front" style="font-size:0.75rem;"><?=$oauth2account?> &rarr;</span>
+                    </button>
+                </div>
+                <div style="padding:3px 0 6px 0;">OR</div>
+                <div>
+                    <button type="button" class="pushable cancel" onclick="document.location='<?=AZURE_LOGOUT_URL.'?post_logout_redirect_uri='.APP_HOME.'/login/signout.php'?>';">
+                        <span class="shadow"></span>
+                        <span class="edge"></span>
+                        <span class="front" style="font-size:0.75rem;">CHANGE TO ANOTHER ACCOUNT</span>
+                    </button>
+                </div>
+            <?php }else{ ?>
                 <div>
                     <button type="button" class="pushable" onclick="document.location='<?=APP_HOME?>/login/signin.php';">
                         <span class="shadow"></span>
                         <span class="edge"></span>
                         <span class="front">SIGN IN WITH CMU ACCOUNT</span>
                     </button>
-                </div>  
+                </div> 
                 <p><span>โปรดเข้าสู่ระบบก่อนเข้าร่วมกิจกรรม</span></p>
+            <?php } ?>
             </div>
             <div class="widget-aura-1"></div>
             <div class="widget-aura-2"></div>
