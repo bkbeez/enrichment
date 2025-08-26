@@ -132,12 +132,93 @@
                         $_SESSION['cmuitaccount_name'] = $cmuitaccount_name;
                         $_SESSION['cmuitaccount'] = $cmuitaccount;
                         $_SESSION['organization_name_EN'] = $organization_name_EN;
+                        $_SESSION['user_type'] = 'user';
                         $_SESSION['student_id'] = $student_id;
                         $_SESSION['academic_year'] = $academic_year;
                         header('location: '.APP_HOME);
                         exit();
                     }
                 }else{
+                    // Checking
+                    $check = Site::one("SELECT * FROM users_cmu WHERE cmuitaccount=:cmuitaccount LIMIT 1;", array('cmuitaccount'=>$basic->cmuitaccount));
+                    if( isset($check['id'])&&$check['id'] ){
+                        $datas  = '`cmu_timestamp`';
+                        $datas .= "=NOW()";
+                        foreach($users as $key => $value ){
+                            $datas .= ',`'.$key.'`';
+                            $datas .= "=:".$key;
+                        }
+                        $users = array();
+                        $users['id'] = $check['id'];
+                        $users['cmuitaccount_name'] = $basic->cmuitaccount_name;
+                        $users['cmuitaccount'] = $basic->cmuitaccount;
+                        $users['student_id'] = $basic->student_id;
+                        $users['prename_id'] = $basic->prename_id;
+                        $users['prename_TH'] = $basic->prename_TH;
+                        $users['prename_EN'] = $basic->prename_EN;
+                        $users['firstname_TH'] = $basic->firstname_TH;
+                        $users['firstname_EN'] = $basic->firstname_EN;
+                        $users['lastname_TH'] = $basic->lastname_TH;
+                        $users['lastname_EN'] = $basic->lastname_EN;
+                        $users['organization_code'] = $basic->organization_code;
+                        $users['organization_name_TH'] = $basic->organization_name_TH;
+                        $users['organization_name_EN'] = $basic->organization_name_EN;
+                        $users['itaccounttype_id'] = $basic->itaccounttype_id;
+                        $users['itaccounttype_TH'] = $basic->itaccounttype_TH;
+                        $users['itaccounttype_EN'] = $basic->itaccounttype_EN;
+                        Site::update("UPDATE `users_cmu` SET $datas WHERE id=:id;", $users);
+                        // Signed
+                        $currentMonth = date('m');
+                        $currentYear = date('Y');
+                        $currentDay = date('d');
+                        if ($currentMonth == '01') {
+                            $academic_year = (int)$currentYear + 542;
+                        } elseif ($currentMonth == '02') {
+                            $academic_year = (int)$currentYear + 542;
+                        } elseif ($currentMonth == '03') {
+                            $academic_year = (int)$currentYear + 542;
+                        } elseif ($currentMonth == '04') {
+                            $academic_year = (int)$currentYear + 542;
+                        } elseif ($currentMonth == '05') {
+                            $academic_year = (int)$currentYear + 542;
+                        } elseif ($currentMonth == '06') {
+                            $academic_year = (int)$currentYear + 542;
+                        } elseif ($currentMonth == '07' && $currentDay < 15) {
+                            $academic_year = (int)$currentYear + 542;
+                        } elseif ($currentMonth == '07' && $currentDay >= 15) {
+                            $academic_year = (int)$currentYear + 543;
+                        } elseif ($currentMonth == '08') {
+                            $academic_year = (int)$currentYear + 543;
+                        } elseif ($currentMonth == '09') {
+                            $academic_year = (int)$currentYear + 543;
+                        } elseif ($currentMonth == '10') {
+                            $academic_year = (int)$currentYear + 543;
+                        } elseif ($currentMonth == '11') {
+                            $academic_year = (int)$currentYear + 543;
+                        } elseif ($currentMonth == '12') {
+                            $academic_year = (int)$currentYear + 543;
+                        } else {
+                            $academic_year = "Unknown";
+                        }
+                        // Logs
+                        $logs = array();
+                        $logs['cmuitaccount_name'] = $basic->cmuitaccount_name;
+                        $logs['cmuitaccount'] = $basic->cmuitaccount;
+                        $logs['student_id'] = null;
+                        $logs['action'] = 'login';
+                        $log_id = Site::createLastInsertId("INSERT INTO `users_cmu_log` (`cmuitaccount_name`,`cmuitaccount`,`student_id`,`action`,`timestamp`) VALUES (:cmuitaccount_name,:cmuitaccount,:student_id,:action,NOW());", $logs);
+                        if( $log_id ){
+                            Site::update("UPDATE `users_cmu_log` SET `log_id`=:log_id WHERE id=:id;", array('id'=>$log_id, 'log_id'=>'log_'.$log_id));
+                        }
+                        $_SESSION['cmuitaccount_name'] = $basic->cmuitaccount_name;
+                        $_SESSION['cmuitaccount'] = $basic->cmuitaccount;
+                        $_SESSION['organization_name_EN'] = $basic->organization_name_EN;
+                        $_SESSION['user_type'] = $check['user_type'];
+                        $_SESSION['student_id'] = null;
+                        $_SESSION['academic_year'] = $academic_year;
+                        header('location: '.APP_HOME);
+                        exit();
+                    }
                     $_SESSION['loginmsg']['title'] = 'Login Fail !!!';
                     $_SESSION['loginmsg']['text'] = 'บัญชีนี้ไม่ใช่บัญชีนักศึกษา, <i>โปรดตรวจสอบบัญชีของท่าน</i>';
                     header('location: '.APP_HOME.'/login/deny.php');
